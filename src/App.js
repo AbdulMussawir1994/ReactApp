@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React, { useEffect, useState, useCallback, createContext } from "react";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./Helpers/AppRoutes";
+import Navbar from "./components/navbar/Navbar";
+import authService from "./services/AuthService";
 
-function App() {
+export const AuthContext = createContext();
+
+const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(!!authService.getToken());
+
+  const checkAuth = useCallback(() => {
+    const token = authService.getToken();
+    setIsAuthenticated(!!token);
+  }, []);
+
+  useEffect(() => {
+    checkAuth();
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
+  }, [checkAuth]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+      <BrowserRouter>
+        {isAuthenticated && <Navbar />}
+        <AppRoutes isAuthenticated={isAuthenticated} />
+      </BrowserRouter>
+    </AuthContext.Provider>
   );
-}
+};
 
 export default App;
