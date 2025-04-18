@@ -30,14 +30,15 @@ const Navbar = () => {
   if (isHidden) return null;
 
   return (
-    <nav className="navbar" role="navigation" aria-label="main navigation">
+    <div className="navbar-wrapper">
+      <nav className="navbar" role="navigation" aria-label="main navigation">
       <div className="navbar-container">
         <ul className="navbar-links">
           <li>
             <Link to="/list">Employee List</Link>
           </li>
           <li>
-            <Link to="/add">Add Employee</Link>
+            <Link to="/AddRole">Add Role</Link>
           </li>
           <li>
             <Link to="/register" state={{ from: location.pathname }}>
@@ -57,6 +58,8 @@ const Navbar = () => {
         )}
       </div>
     </nav>
+    </div>
+    
   );
 };
 

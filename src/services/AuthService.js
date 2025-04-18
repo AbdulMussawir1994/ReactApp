@@ -7,7 +7,7 @@ class AuthService {
     this.tokenKey = "accessToken";
 
     this.http = axios.create({
-      baseURL: configuration.Authentication,
+      baseURL: configuration.BackEndServer,
       headers: { "Content-Type": "application/json" },
       timeout: 10000,
     });
@@ -37,7 +37,6 @@ class AuthService {
   logOut = async () => {
     try {
       sessionStorage.removeItem(this.tokenKey);
-      window.location.replace("/Login");
     } catch (error) {
       console.error("[AuthService] Logout error:", error);
     }

@@ -3,6 +3,7 @@ import Dashboard from "../components/main/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import SignIn from "../components/auth/SignIn";
 import SignUp from "../components/auth/Signup";
+import AddRole from "../components/auth/AddRole";
 
 /**
  * @desc Route configuration with protected and public routes
@@ -26,6 +27,7 @@ const AppRoutes = ({ isAuthenticated }) => {
       {/* Protected Routes */}
       <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
         <Route path="/Dashboard" element={<Dashboard />} />
+        <Route path="/AddRole" element={<AddRole/>}></Route>
         {/* Add future protected routes here */}
       </Route>
 

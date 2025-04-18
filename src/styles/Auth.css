@@ -172,7 +172,7 @@
 @media (max-width: 768px) {
   .auth-card input[type="submit"] {
     width: 70%;
-    max-width: 95%;
+    max-width: 50%;
     padding: 1.2rem 1rem;
     font-size: 0.9rem;
   }
@@ -210,5 +210,6 @@
   .auth-card input[type="submit"] {
     padding: 0.65rem;
     font-size: 0.95rem;
+    width: 50%;
   }
 }

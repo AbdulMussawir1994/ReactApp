@@ -1,7 +1,8 @@
 // File: src/components/signup/SignUpForm.jsx
 import React, { useState, useCallback } from "react";
 import "../../styles/Auth.css";
-import { Link } from "react-router";
+import { Link } from "react-router-dom"; // ✅ fixed from "react-router"
+import Swal from "sweetalert2"; // ✅ Import SweetAlert2
 
 const validationRules = {
   username: {
@@ -75,14 +76,52 @@ const SignUp = () => {
     const fieldValue = type === "checkbox" ? checked : value;
 
     setFormData((prev) => ({ ...prev, [name]: fieldValue }));
-    setErrors((prev) => ({ ...prev, [name]: validateField(name, fieldValue) }));
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validateField(name, fieldValue),
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
 
-    console.log("Form Submitted:", formData);
+    if (!validateForm()) {
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Please correct the form errors before submitting.",
+      });
+      return;
+    }
+
+    try {
+      // Simulated success, replace with your API call
+      console.log("Form Submitted:", formData);
+
+      await Swal.fire({
+        icon: "success",
+        title: "Registration Successful!",
+        text: "You can now log in with your account.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      // Reset form
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        agree: false,
+      });
+      setErrors({});
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: "Something went wrong. Please try again later.",
+      });
+    }
   };
 
   return (
@@ -135,11 +174,15 @@ const SignUp = () => {
               onChange={handleChange}
               required
             />
-            <p className={`form-error ${!errors.confirmPassword ? "hidden" : ""}`}>
+            <p
+              className={`form-error ${
+                !errors.confirmPassword ? "hidden" : ""
+              }`}
+            >
               {errors.confirmPassword || "placeholder"}
             </p>
 
-            <label style={{ fontSize: "0.95rem", marginBottom: "1rem" }}>
+            <label style={{ fontSize: "0.95rem"}}>
               <input
                 type="checkbox"
                 name="agree"
@@ -149,14 +192,13 @@ const SignUp = () => {
               />
               I agree to the Terms & Conditions
             </label>
-            <p className={`form-error ${!errors.agree ? "hidden" : ""}`}>
+            <p style={{marginTop: "0px"}} className={`form-error ${!errors.agree ? "hidden" : ""}`}>
               {errors.agree || "placeholder"}
             </p>
 
-          <div style={{ marginTop: "-20px" }}>
-          <input type="submit" value="SIGN UP" />
-          </div>
-       
+            <div style={{ marginTop: "0px" }}>
+              <input type="submit" value="SIGN UP" />
+            </div>
           </form>
 
           <div className="auth-footer">
@@ -164,6 +206,7 @@ const SignUp = () => {
               Already have an account? <Link to="/login">Sign In</Link>
             </p>
           </div>
+
           {/* Bubble Animation */}
           <ul className="colorlib-bubbles">
             {Array.from({ length: 10 }).map((_, i) => (

@@ -5,6 +5,7 @@ import authService from "../../services/AuthService";
 import "../../styles/Auth.css";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../App";
+import Swal from "sweetalert2";
 
 const validationRules = {
   cnic: {
@@ -27,7 +28,6 @@ const SignIn = () => {
   const { setIsAuthenticated } = useContext(AuthContext);
   const [formData, setFormData] = useState({ cnic: "", password: "" });
   const [errors, setErrors] = useState({});
-  const [serverError, setServerError] = useState(null);
   const navigate = useNavigate();
 
   const validateField = useCallback((name, value) => {
@@ -53,7 +53,6 @@ const SignIn = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
-    setServerError(null); // Clear server error on change
   };
 
   const handleSubmit = async (e) => {
@@ -61,16 +60,30 @@ const SignIn = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await authService.post("/LoginUser", formData);
+      const response = await authService.post("User/LoginUser", formData);
       if (response.data.status.isSuccess) {
         authService.saveToken(response.data.content.accessToken);
-        setIsAuthenticated(true); // ✅ Update context state
+        setIsAuthenticated(true);
+        await Swal.fire({
+          icon: "success",
+          title: "Login Successful",
+          timer: 1500,
+          showConfirmButton: false,
+        });
         navigate("/dashboard");
       } else {
-        setServerError(response.data.status.statusMessage);
+        Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: response.data.status.statusMessage,
+        });
       }
     } catch (error) {
-      setServerError(error ?? "An error occurred. Please try again.");
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: error ?? "An unexpected error occurred. Please try again.",
+      });
     }
   };
 
@@ -103,10 +116,6 @@ const SignIn = () => {
             <p className={`form-error ${!errors.password ? "hidden" : ""}`}>
               {errors.password || "placeholder"}
             </p>
-
-            <div className="server-error">
-            {serverError && <p className="form-error" style={{textAlign:"center"}}>{serverError}</p>}
-            </div>
 
             <input type="submit" value="SIGN IN" />
           </form>
